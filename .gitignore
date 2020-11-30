@@ -1,0 +1,9 @@
+/.idea
+/tests/_data/
+/tests/_support/_generated/
+/vendor/
+/_output/
+/lib/chromedriver.exe
+/lib/codecept.phar
+/lib/createCest.sh
+/lib/selenium-server-standalone.jar
