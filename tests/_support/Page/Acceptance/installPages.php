@@ -1,123 +1,153 @@
 <?php
-namespace Page\Acceptance;
 
-class installPages
-{
-    // include url of current page
-    public $URL;
-    public static $keyField = ("//input[@name=\"key\"]");
-    public static $nextButton = "//input[@value=\"Далее   >\"]";
-    public static $templateNextButton = "//input[@value=\"Далее   »\"]";
-    public static $dbHostField = "//input[@name=\"host\"]";
-    public static $dbNameField = "//input[@name=\"dbname\"]";
-    public static $dbUserField = "//input[@name=\"user\"]";
-    public static $dbPasswordField = "//input[@name=\"password\"]";
-    public static $backupCheckbox = "//label[@for=\"cbbackup\"]";
-    public static $chooseTemplateHeader = "//p[@class=\"check_user\"]";
-    public static $showLogs = "//a[@class=\"wrapper\"]";
-    public static $loginField = "//input[@name=\"sv_login\"]";
-    public static $emailField = "//input[@name=\"sv_email\"]";
-    public static $passwordField = "//input[@name=\"sv_password\"]";
-    public static $verifyPasswordField = "//input[@name=\"sv_password2\"]";
-    public static $systemInstalledText = "//p[text()=\"Установка системы завершена\"]";
-    public static $typeOfSiteSearchField = "//input[@class=\"search\"]";
-    public static $typeOfSiteSearchButton = "//input[@class=\"next_step_submit\"]";
-    public static $typeOfSite1Span = "//label[@for=\"type_of_site1\"]/span";
-    public static $searchResultOfSite = "//div[@class=\"site\"]";
+    namespace Page\Acceptance;
 
-    protected $I;
-    protected $installIni;
-
-    public function __construct(\AcceptanceTester $I, $installIni)
-    {
-        $this->I = $I;
-        $this->installIni = $installIni;
-        $this->URL = "http://$installIni->domain/install.php";
-    }
-
-    /*Формирует xpath адрес для полученного типа решения
-    * @param $number
-    * @return string
+    /**
+     * Содержит основные методы для установки umi.cms2 и xpath.
     */
-    public function typeOfSiteSpanBuilder($number = 1) {
-        return "//label[@for=\"type_of_site$number\"]/span";
-    }
+    class installPages {
+        public $URL;
+        public $labelTypeOfSite;
+        public $keyField = ("//input[@name=\"key\"]");
+        public $nextButton = "//input[@value=\"Далее   >\"]";
+        public $templateNextButton = "//input[@value=\"Далее   »\"]";
+        public $dbHostField = "//input[@name=\"host\"]";
+        public $dbNameField = "//input[@name=\"dbname\"]";
+        public $dbUserField = "//input[@name=\"user\"]";
+        public $dbPasswordField = "//input[@name=\"password\"]";
+        public $backupCheckbox = "//label[@for=\"cbbackup\"]";
+        public $chooseTemplateHeader = "//p[@class=\"check_user\"]";
+        public $showLogs = "//a[@class=\"wrapper\"]";
+        public $loginField = "//input[@name=\"sv_login\"]";
+        public $emailField = "//input[@name=\"sv_email\"]";
+        public $passwordField = "//input[@name=\"sv_password\"]";
+        public $verifyPasswordField = "//input[@name=\"sv_password2\"]";
+        public $systemInstalledText = "//p[text()=\"Установка системы завершена\"]";
+        public $typeOfSiteSearchField = "//input[@class=\"search\"]";
+        public $typeOfSiteSearchButton = "//input[@class=\"next_step_submit\"]";
+        public $typeOfSite1Span = "//label[@for=\"type_of_site1\"]/span";
+        public $searchResultOfSite = "//div[@class=\"site\"]";
 
-    /*Вводит все поля и устанавливает всё до шаблона*/
-    public function coreInstaller() {
-        $I=$this->I;
-        $installIni = $this->installIni;
-        $I->fillField(installPages::$keyField, $installIni->key);
-        $I->click(installPages::$nextButton);
-        $I->waitForElementVisible(installPages::$dbHostField);
-        $I->fillField(installPages::$dbHostField, $installIni->host);
-        $I->fillField(installPages::$dbNameField, $installIni->dbname);
-        $I->fillField(installPages::$dbUserField, $installIni->dbuser);
-        $I->fillField(installPages::$dbPasswordField, $installIni->dbpassword);
-        $I->click(installPages::$nextButton);
-        $I->waitForElementVisible(installPages::$backupCheckbox);
-        $I->click(installPages::$backupCheckbox);
-        $I->click(installPages::$nextButton);
-        $I->waitForElementVisible(installPages::$showLogs);
-        $I->click(installPages::$showLogs);
-    }
+        protected $acceptanceTester;
+        protected $installIni;
 
-    /* Установка через поиск.
-     * Используется для 1 и 2 типа решения
-     * @param $typeNumber
-     * */
-    private function searchTemplateInstaller($typeNumber){
-        $I=$this->I;
-        $templateName = $this->installIni->templateName;
-        $I->click($this->typeOfSiteSpanBuilder($typeNumber));
-        $I->click(installPages::$templateNextButton);
-        $I->waitForElementVisible(installPages::$typeOfSiteSearchField);
-        $I->fillField(installPages::$typeOfSiteSearchField,$templateName);
-        $I->click(installPages::$typeOfSiteSearchButton);
-        $I->waitForElementVisible(installPages::$searchResultOfSite);
-        $I->moveMouseOver(installPages::$searchResultOfSite."/div");
-        $I->waitForElementVisible("//div/a[@rel=\"$templateName\"]");
-        $I->click("//div/a[@rel=\"$templateName\"]");
-        $I->click(installPages::$templateNextButton);
-        $I->click(installPages::$templateNextButton);
-    }
-
-    /*Отвечает за установку шаблона после coreInstaller*/
-    public function templateInstaller($type){
-        $I=$this->I;
-        $templateName = $this->installIni->templateName;
-        $I->waitForElementVisible($this->typeOfSiteSpanBuilder());
-        switch ($type){
-            case "demo":
-                $I->click($this->typeOfSiteSpanBuilder(3));
-                $I->click(installPages::$templateNextButton);
-                $I->waitForElementVisible("//label[@for=\"$templateName\"]/span");
-                $I->click("//label[@for=\"$templateName\"]/span");
-                $I->click(installPages::$templateNextButton);
-                break;
-            case "free":
-                $this->searchTemplateInstaller(2);
-                break;
-            case "paid":
-                $this->searchTemplateInstaller(1);
-            break;
-            default:
-                if ($templateName!="_blank") echo("\nНе найден шаблон с именем $templateName.\nПроверьте название в файле install.ini. Если название корректное, то убедитесь, что этот шаблон привязан к вашему ключу. \nУстанавливаю без шаблона.\n\n");
-                $I->click($this->typeOfSiteSpanBuilder(4));
-                $I->click(installPages::$templateNextButton);
-                break;
+        public function __construct(\AcceptanceTester $acceptanceTester, $installIni) {
+            $this->acceptanceTester = $acceptanceTester;
+            $this->installIni = $installIni;
+            $this->URL = "http://$installIni->domain/install.php";
         }
-    }
 
-    /*Отвечает за ввод данных админа*/
-    public function svUserInstaller(){
-        $I=$this->I;
-        $installIni = $this->installIni;
-        $I->fillField(installPages::$emailField, $installIni->email);
-        $I->fillField(installPages::$loginField,$installIni->login);
-        $I->fillField(installPages::$passwordField, $installIni->password);
-        $I->fillField(installPages::$verifyPasswordField, $installIni->password);
-        $I->click(installPages::$templateNextButton);
-    }
+        /** Формирует xpath адрес для полученного типа решения
+         * @param $type - тип решения, по умолчанию тип 1
+         * @return string
+        */
+        public function getTypeOfSiteSpanXpath($type = 1) {
+            return "//label[@for=\"type_of_site$type\"]/span";
+        }
+
+        /** Данный метод отвечает за выбор в браузере типа шаблона.
+         * @param $type - передается тип готового решения
+         */
+        private function selectTypeOfSite($type) {
+            $this->acceptanceTester->click($this->getTypeOfSiteSpanXpath($type));
+            $this->acceptanceTester->click($this->templateNextButton);
+        }
+
+        /**
+         * Данный метод используется для заполнения форм:
+         * 1)Ключ
+         * 2)БД
+         * Так же ставит чекбокс подтверждения наличия бэкапа.
+        */
+        public function coreInstaller() {
+            $acceptanceTester = $this->acceptanceTester;
+            $installIni = $this->installIni;
+            $acceptanceTester->fillField($this->keyField, $installIni->key);
+            $acceptanceTester->click($this->nextButton);
+            $acceptanceTester->waitForElementVisible($this->dbHostField);
+            $acceptanceTester->fillField($this->dbHostField, $installIni->host);
+            $acceptanceTester->fillField($this->dbNameField, $installIni->dbname);
+            $acceptanceTester->fillField($this->dbUserField, $installIni->dbuser);
+            $acceptanceTester->fillField($this->dbPasswordField, $installIni->dbpassword);
+            $acceptanceTester->click($this->nextButton);
+            $acceptanceTester->waitForElementVisible($this->backupCheckbox);
+            $acceptanceTester->click($this->backupCheckbox);
+            $acceptanceTester->click($this->nextButton);
+            $acceptanceTester->waitForElementVisible($this->showLogs);
+            $acceptanceTester->click($this->showLogs);
+        }
+
+        /** Находит через поиск введенное решение и устанавливает его.
+         * На данный момент используется только для 1 и 2 типов решения
+         * @throws \Exception - если установка не удалась.
+        */
+        private function searchTemplateInstaller() {
+            $acceptanceTester = $this->acceptanceTester;
+            $templateName = $this->installIni->templateName;
+            $chooseButton = "//div/a[@rel=\"$templateName\"]";
+            $acceptanceTester->click($this->templateNextButton);
+            $acceptanceTester->waitForElementVisible($this->typeOfSiteSearchField);
+            $acceptanceTester->fillField($this->typeOfSiteSearchField, $templateName);
+            $acceptanceTester->click($this->typeOfSiteSearchButton);
+            $acceptanceTester->waitForElementVisible($this->searchResultOfSite);
+            $acceptanceTester->moveMouseOver($this->searchResultOfSite . "/div");
+            $acceptanceTester->waitForElementVisible($chooseButton);
+            $acceptanceTester->click($chooseButton);
+            $acceptanceTester->click($this->templateNextButton);
+            $acceptanceTester->click($this->templateNextButton);
+        }
+
+        /**
+         * Метод выбирает устанавливаемый шаблон.
+         * @param $type - передается тип готового решения
+         * @throws \Exception - если установка не удалась
+        */
+        public function templateInstaller($type) {
+            $acceptanceTester = $this->acceptanceTester;
+            $templateName = $this->installIni->templateName;
+            $this->labelTypeOfSite = "//label[@for=\"$templateName\"]/span";
+            switch ($type) {
+                case "demo":
+                {
+                    $this->selectTypeOfSite(3);
+                    $acceptanceTester->waitForElementVisible($this->labelTypeOfSite);
+                    $acceptanceTester->click($this->labelTypeOfSite);
+                    $acceptanceTester->click($this->templateNextButton);
+                    break;
+                }
+                case "free":
+                    $this->selectTypeOfSite(2);
+                    $this->searchTemplateInstaller();
+                    break;
+                case "paid":
+                    $this->selectTypeOfSite(3);
+                    $this->searchTemplateInstaller();
+                    break;
+                default:
+                {
+                    if ($templateName != "_blank") {
+                        echo("\nНе найден шаблон с именем $templateName.\n"
+                            . "Проверьте название в файле install.ini.\n"
+                            . "Если название корректное, то убедитесь, что этот шаблон привязан к вашему ключу.\n"
+                            . "Устанавливаю без шаблона.\n\n");
+                    }
+                    $this->selectTypeOfSite(4);
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Отвечает за заполнение формы администратора
+        */
+        public function svUserInstaller() {
+            $acceptanceTester = $this->acceptanceTester;
+            $installIni = $this->installIni;
+            $acceptanceTester->fillField($this->emailField, $installIni->email);
+            $acceptanceTester->fillField($this->loginField, $installIni->login);
+            $acceptanceTester->fillField($this->passwordField, $installIni->password);
+            $acceptanceTester->fillField($this->verifyPasswordField, $installIni->password);
+            $acceptanceTester->click($this->templateNextButton);
+        }
 
 }
