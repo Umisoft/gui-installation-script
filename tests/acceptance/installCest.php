@@ -5,20 +5,16 @@
     use Page\Acceptance\installIni;
 
     /**
-     * Основной класс программы (входная точка)
-     * Создает экземпляр класса installIni и installPages.
+     * Класс тестов инсталятора
      *
     */
     class installCest {
-        /** Таймаут ожидания для перехода к следующему шагу установки */
+
+        /** @const int TIMEOUT таймаут ожидания для перехода к следующему шагу установки */
         public const TIMEOUT = 420;
 
         /**
-         * Основной метод.
-         * 1) Создает экземпляр класса installIni и installPages.
-         * 2) Переходит по URL, созданному в installPages
-         * 3) Запускает основные методы установки в классе installPages
-         * 4) Управляет ожиданиями между методами установки
+         * Тест установки umi.cms
          * @param AcceptanceTester $acceptanceTester - переменная, передается от Codeception.
          * Используется как надстройка над драйвером от разработчика фреймворка.
          * @throws Exception - если установка не удалась.
@@ -27,12 +23,12 @@
             $installIni = new installIni();
             $installPages = new installPages($acceptanceTester, $installIni);
             $checkTemplate = new apiClient($installIni);
-            $type = $checkTemplate->getSolutionType($installIni->templateName);
+            $typeName = $checkTemplate->getSolutionType($installIni->templateName);
             $acceptanceTester->amOnUrl($installPages->url);
             $acceptanceTester->waitForElement($installPages->keyField);
             $installPages->coreInstaller();
             $acceptanceTester->waitForElementVisible($installPages->getTypeOfSiteSpanXpath(), self::TIMEOUT);
-            $installPages->templateInstaller($type);
+            $installPages->templateInstaller($typeName);
             $acceptanceTester->waitForElementVisible($installPages->loginField, self::TIMEOUT);
             $installPages->fillSvUserForm();
             $acceptanceTester->waitForElementVisible($installPages->systemInstalledText);

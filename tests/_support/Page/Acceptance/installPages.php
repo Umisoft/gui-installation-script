@@ -3,72 +3,84 @@
     namespace Page\Acceptance;
 
     /**
-     * Класс представляет страницу установки /install.php в виде POM
+     * Представляет страницу установки /install.php в виде POM
     */
     class installPages {
-        /** @var $url - содержит url адрес страницы с /install.php */
+        /** @var string $url адрес страницы с /install.php */
         public $url;
 
-        /** @var $labelTypeOfSite - содержит xpath к radiobutton при выборе типа решения */
+        /** @var string $labelTypeOfSite xpath к radiobutton при выборе типа решения */
         public $labelTypeOfSite;
 
-        /** @var $keyField - содержит xpath к полю ввода "Введите ключ"*/
+        /** @var string $keyField xpath к полю ввода "Введите ключ"*/
         public $keyField = ("//input[@name=\"key\"]");
 
-        /** @var $nextButton - содержит xpath к кнопке "Далее   >", которая используется до установки шаблона */
+        /** @var string $nextButton xpath к кнопке "Далее   >", которая используется до установки шаблона */
         public $nextButton = "//input[@value=\"Далее   >\"]";
 
-        /** @var $templateNextButton - содержит xpath к кнопке "Далее   »", которая используется при установке шаблона */
+        /** @var string $templateNextButton xpath к кнопке "Далее   »", которая используется при установке шаблона */
         public $templateNextButton = "//input[@value=\"Далее   »\"]";
 
-        /** @var $dbHostField - содержит xpath к полю ввода "Имя хоста" */
+        /** @var string $dbHostField xpath к полю ввода "Имя хоста" */
         public $dbHostField = "//input[@name=\"host\"]";
 
-        /** @var $dbNameField - содержит xpath к полю ввода "Имя базы данных" */
+        /** @var string $dbNameField xpath к полю ввода "Имя базы данных" */
         public $dbNameField = "//input[@name=\"dbname\"]";
 
-        /** @var $dbUserField - содержит xpath к полю ввода "Логин" при настройке БД */
+        /** @var string $dbUserField xpath к полю ввода "Логин" при настройке БД */
         public $dbUserField = "//input[@name=\"user\"]";
 
-        /** @var $dbPasswordField - содержит xpath к полю ввода "Пароль" при настройке БД */
+        /** @var string $dbPasswordField xpath к полю ввода "Пароль" при настройке БД */
         public $dbPasswordField = "//input[@name=\"password\"]";
 
-        /** @var $backupCheckbox - содержит xpath к чекбоксу "Подтверждаю, что сделал бэкап всех файлов,
+        /** @var string $backupCheckbox xpath к чекбоксу "Подтверждаю, что сделал бэкап всех файлов,
         а также дамп базы данных средствами хостинг-провайдера." */
         public $backupCheckbox = "//label[@for=\"cbbackup\"]";
 
-        /** @var $showLogs - содержит xpath к гиперссылке "Показать ход установки" */
+        /** @var string $showLogs xpath к гиперссылке "Показать ход установки" */
         public $showLogs = "//a[@class=\"wrapper\"]";
 
-        /** @var $loginField - содержит xpath к полю ввода "Логин" при настройке суперпользователя */
+        /** @var string $loginField xpath к полю ввода "Логин" при настройке суперпользователя */
         public $loginField = "//input[@name=\"sv_login\"]";
 
-        /** @var $emailField - содержит xpath к полю ввода "E-mail" при настройке суперпользователя */
+        /** @var string $emailField xpath к полю ввода "E-mail" при настройке суперпользователя */
         public $emailField = "//input[@name=\"sv_email\"]";
 
-        /** @var $passwordField - содержит xpath к полю ввода "Пароль" при настройке суперпользователя */
+        /** @var string $passwordField xpath к полю ввода "Пароль" при настройке суперпользователя */
         public $passwordField = "//input[@name=\"sv_password\"]";
 
-        /** @var $verifyPasswordField - содержит xpath к полю ввода "Пароль ещё раз" при настройке суперпользователя */
+        /** @var string $verifyPasswordField xpath к полю ввода "Пароль ещё раз" при настройке суперпользователя */
         public $verifyPasswordField = "//input[@name=\"sv_password2\"]";
 
-        /** @var $systemInstalledText - содержит xpath к тексту "Установка системы завершена" */
+        /** @var string $systemInstalledText xpath к тексту "Установка системы завершена" */
         public $systemInstalledText = "//p[text()=\"Установка системы завершена\"]";
 
-        /** @var $typeOfSiteSearchField - содержит xpath к полю ввода поиска "Введите номер сайта" */
+        /** @var string $typeOfSiteSearchField xpath к полю ввода поиска "Введите номер сайта" */
         public $typeOfSiteSearchField = "//input[@class=\"search\"]";
 
-        /** @var $typeOfSiteSearchButton - содержит xpath к кнопке "Найти" на странице поиска */
+        /** @var string $typeOfSiteSearchButton xpath к кнопке "Найти" на странице поиска */
         public $typeOfSiteSearchButton = "//input[@class=\"next_step_submit\"]";
 
-        /** @var $searchResultOfSite - содержит xpath к результату поиска */
+        /** @var string $searchResultOfSite  xpath к результату поиска */
         public $searchResultOfSite = "//div[@class=\"site\"]";
 
-        /** @var $acceptanceTester - содержит экземпляр класса для управления фреймворком */
+        /** @var \AcceptanceTester $acceptanceTester экземпляр класса для управления фреймворком */
         private $acceptanceTester;
 
-        /** @var $installIni - содержит экземпляр installIni */
+        /** @var installIni $installIni экземпляр installIni */
         private $installIni;
+
+        /** @const int PAID_SOLUTION_TYPE тип "платные готовые решения" */
+        private const PAID_SOLUTION_TYPE = 1;
+
+        /** @const int FREE_SOLUTION_TYPE тип "бесплатные готовые решения" */
+        private const FREE_SOLUTION_TYPE = 2;
+
+        /** @const int DEMO_SOLUTION_TYPE тип "демошаблоны" */
+        private const DEMO_SOLUTION_TYPE = 3;
+
+        /** @const int BLANK_SOLUTION_TYPE тип "без шаблона" */
+        private const BLANK_SOLUTION_TYPE = 4;
 
         /**
          * При создании класса производит первоначальную установку.
@@ -86,7 +98,7 @@
          * @param int $type - тип решения, по умолчанию тип 1
          * @return string
          */
-        public function getTypeOfSiteSpanXpath($type = 1) {
+        public function getTypeOfSiteSpanXpath($type = self::PAID_SOLUTION_TYPE) {
             return "//label[@for=\"type_of_site$type\"]/span";
         }
 
@@ -113,9 +125,9 @@
             $acceptanceTester->click($this->nextButton);
             $acceptanceTester->waitForElementVisible($this->dbHostField);
             $acceptanceTester->fillField($this->dbHostField, $installIni->host);
-            $acceptanceTester->fillField($this->dbNameField, $installIni->dbname);
-            $acceptanceTester->fillField($this->dbUserField, $installIni->dbuser);
-            $acceptanceTester->fillField($this->dbPasswordField, $installIni->dbpassword);
+            $acceptanceTester->fillField($this->dbNameField, $installIni->dbName);
+            $acceptanceTester->fillField($this->dbUserField, $installIni->dbUser);
+            $acceptanceTester->fillField($this->dbPasswordField, $installIni->dbPassword);
             $acceptanceTester->click($this->nextButton);
             $acceptanceTester->waitForElementVisible($this->backupCheckbox);
             $acceptanceTester->click($this->backupCheckbox);
@@ -146,40 +158,33 @@
 
         /**
          * Выбирает устанавливаемый шаблон.
-         * @param $type - передается тип готового решения
-         * @throws \Exception - если установка не удалась
+         * @param string $typeName имя типа готового решения
+         * @throws \Exception если установка не удалась
          */
-        public function templateInstaller($type) {
+        public function templateInstaller($typeName) {
             $acceptanceTester = $this->acceptanceTester;
             $templateName = $this->installIni->templateName;
             $this->labelTypeOfSite = "//label[@for=\"$templateName\"]/span";
-            switch ($type) {
+            switch ($typeName) {
                 case "demo": {
-                    $this->selectTypeOfSite(3);
+                    $this->selectTypeOfSite(self::DEMO_SOLUTION_TYPE);
                     $acceptanceTester->waitForElementVisible($this->labelTypeOfSite);
                     $acceptanceTester->click($this->labelTypeOfSite);
                     $acceptanceTester->click($this->templateNextButton);
                     break;
                 }
                 case "free": {
-                    $this->selectTypeOfSite(2);
+                    $this->selectTypeOfSite(self::FREE_SOLUTION_TYPE);
                     $this->searchTemplateInstaller();
                     break;
                 }
                 case "paid": {
-                    $this->selectTypeOfSite(3);
+                    $this->selectTypeOfSite(self::PAID_SOLUTION_TYPE);
                     $this->searchTemplateInstaller();
                     break;
                 }
-                default:
-                {
-                    if ($templateName != "_blank") {
-                        echo("\nНе найден шаблон с именем $templateName.\n"
-                            . "Проверьте название в файле install.ini.\n"
-                            . "Если название корректное, то убедитесь, что этот шаблон привязан к вашему ключу.\n"
-                            . "Устанавливаю без шаблона.\n\n");
-                    }
-                    $this->selectTypeOfSite(4);
+                default: {
+                    $this->selectTypeOfSite(self::BLANK_SOLUTION_TYPE);
                 }
             }
         }

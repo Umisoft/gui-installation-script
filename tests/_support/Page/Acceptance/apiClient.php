@@ -8,12 +8,10 @@
 
     /**
      * Данный класс является api клиентом для сервера обновлений
-     * @return $name - имя типа устанавливаемого шаблона.
-     * Может вернуть null если не найдет шаблон.
     */
     class apiClient {
 
-        /** @var $installIni - переменная класса installIni, нужна для создания параметров GET запроса */
+        /** @var installIni $installIni - переменная класса installIni, нужна для создания параметров GET запроса */
         private $installIni;
 
         /**
@@ -26,8 +24,27 @@
         }
 
         /**
+         * Получает тип шаблона по его имени
+         * @return string - название типа шаблона
+         * @throws Exception - в случае ошибок
+         */
+        public function getSolutionType($name) {
+            $doc = $this->getDemositesList();
+            $xpath = new DOMXPath($doc);
+            $types = $xpath->query("//solution[@name=\"$name\"]/parent::*");
+            if ($types->length==0) {
+                throw new \Exception("\nНе найден шаблон с именем $name.\n"
+                    . "Проверьте название в файле install.ini.\n"
+                    . "Если название корректное, то убедитесь, что этот шаблон привязан к вашему ключу.\n");
+            }
+            foreach ($types as $type) {
+                return $type->nodeName;
+            }
+        }
+
+        /**
          * Формирует адрес для запроса и возвращает его
-         * @param $type - тип запроса
+         * @param string $type - тип запроса
          * @param array $params - параметры для запроса
          * @return string - возвращает URL
         */
@@ -44,7 +61,7 @@
 
         /**
          * Загружает файл на удаленном сервере
-         * @param $url - URL адрес
+         * @param string $url - URL адрес
          * @return string - возвращает загруженный файл в виде строки
          * @throws Exception - если загрузка не удалась
          */
@@ -107,6 +124,7 @@
 
         /**
          * Проверяет ответ сервера на наличие ошибок
+         * @param DOMDocument $doc - ответ сервера
          * @throws Exception - выбрасывает ошибку сервера
          */
         private function checkResponseErrors(DOMDocument $doc) {
@@ -121,19 +139,4 @@
                     throw new Exception($error->nodeValue, $error->getAttribute('code'));
                 }
         }
-
-        /**
-         * Получает тип шаблона по его имени
-         * @return string - название типа шаблона
-         * @throws Exception - в случае ошибок
-         */
-        public function getSolutionType($name) : string {
-            $doc = $this->getDemositesList();
-            $xpath = new DOMXPath($doc);
-            $types = $xpath->query("//solution[@name=\"$name\"]/parent::*");
-            foreach ($types as $type) {
-                return $type->nodeName;
-            }
-        }
-
 }
