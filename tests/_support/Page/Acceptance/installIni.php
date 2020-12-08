@@ -43,16 +43,9 @@
         private const INSTALL_INI_PATH = 'install.ini';
 
         /**
-         * При создании класса запускает parseInstallIni
-         */
-        public function __construct() {
-            $this->parseInstallIni();
-        }
-
-        /**
          * Парсит install.ini в переменные класса installIni
          */
-        private function parseInstallIni() {
+        public function parseInstallIni() {
             if (!file_exists(self::INSTALL_INI_PATH)) {
                 throw new \Exception("Не найден файл install.ini."
                     . "Убедитесь, что он существует в корневой директории.");

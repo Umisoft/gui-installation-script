@@ -10,59 +10,59 @@
         public $url;
 
         /** @var string $labelTypeOfSite xpath к radiobutton при выборе типа решения */
-        public $labelTypeOfSite;
+        private $labelTypeOfSite;
 
         /** @var string $keyField xpath к полю ввода "Введите ключ"*/
         public $keyField = ("//input[@name=\"key\"]");
 
         /** @var string $nextButton xpath к кнопке "Далее   >", которая используется до установки шаблона */
-        public $nextButton = "//input[@value=\"Далее   >\"]";
+        private $nextButton = "//input[@value=\"Далее   >\"]";
 
         /** @var string $templateNextButton xpath к кнопке "Далее   »", которая используется при установке шаблона */
-        public $templateNextButton = "//input[@value=\"Далее   »\"]";
+        private $templateNextButton = "//input[@value=\"Далее   »\"]";
 
         /** @var string $dbHostField xpath к полю ввода "Имя хоста" */
-        public $dbHostField = "//input[@name=\"host\"]";
+        private $dbHostField = "//input[@name=\"host\"]";
 
         /** @var string $dbNameField xpath к полю ввода "Имя базы данных" */
-        public $dbNameField = "//input[@name=\"dbname\"]";
+        private $dbNameField = "//input[@name=\"dbname\"]";
 
         /** @var string $dbUserField xpath к полю ввода "Логин" при настройке БД */
-        public $dbUserField = "//input[@name=\"user\"]";
+        private $dbUserField = "//input[@name=\"user\"]";
 
         /** @var string $dbPasswordField xpath к полю ввода "Пароль" при настройке БД */
-        public $dbPasswordField = "//input[@name=\"password\"]";
+        private $dbPasswordField = "//input[@name=\"password\"]";
 
         /** @var string $backupCheckbox xpath к чекбоксу "Подтверждаю, что сделал бэкап всех файлов,
         а также дамп базы данных средствами хостинг-провайдера." */
-        public $backupCheckbox = "//label[@for=\"cbbackup\"]";
+        private $backupCheckbox = "//label[@for=\"cbbackup\"]";
 
         /** @var string $showLogs xpath к гиперссылке "Показать ход установки" */
-        public $showLogs = "//a[@class=\"wrapper\"]";
+        private $showLogs = "//a[@class=\"wrapper\"]";
 
         /** @var string $loginField xpath к полю ввода "Логин" при настройке суперпользователя */
         public $loginField = "//input[@name=\"sv_login\"]";
 
         /** @var string $emailField xpath к полю ввода "E-mail" при настройке суперпользователя */
-        public $emailField = "//input[@name=\"sv_email\"]";
+        private $emailField = "//input[@name=\"sv_email\"]";
 
         /** @var string $passwordField xpath к полю ввода "Пароль" при настройке суперпользователя */
-        public $passwordField = "//input[@name=\"sv_password\"]";
+        private $passwordField = "//input[@name=\"sv_password\"]";
 
         /** @var string $verifyPasswordField xpath к полю ввода "Пароль ещё раз" при настройке суперпользователя */
-        public $verifyPasswordField = "//input[@name=\"sv_password2\"]";
+        private $verifyPasswordField = "//input[@name=\"sv_password2\"]";
 
         /** @var string $systemInstalledText xpath к тексту "Установка системы завершена" */
         public $systemInstalledText = "//p[text()=\"Установка системы завершена\"]";
 
         /** @var string $typeOfSiteSearchField xpath к полю ввода поиска "Введите номер сайта" */
-        public $typeOfSiteSearchField = "//input[@class=\"search\"]";
+        private $typeOfSiteSearchField = "//input[@class=\"search\"]";
 
         /** @var string $typeOfSiteSearchButton xpath к кнопке "Найти" на странице поиска */
-        public $typeOfSiteSearchButton = "//input[@class=\"next_step_submit\"]";
+        private $typeOfSiteSearchButton = "//input[@class=\"next_step_submit\"]";
 
         /** @var string $searchResultOfSite  xpath к результату поиска */
-        public $searchResultOfSite = "//div[@class=\"site\"]";
+        private $searchResultOfSite = "//div[@class=\"site\"]";
 
         /** @var \AcceptanceTester $acceptanceTester экземпляр класса для управления фреймворком */
         private $acceptanceTester;
@@ -95,15 +95,23 @@
 
         /**
          * Формирует xpath адрес для полученного типа решения
-         * @param int $type - тип решения, по умолчанию тип 1
+         * @param int $type тип решения
+         * @see self::PAID_SOLUTION_TYPE
+         * @see self::FREE_SOLUTION_TYPE
+         * @see self::DEMO_SOLUTION_TYPE
+         * @see self::BLANK_SOLUTION_TYPE
          * @return string
          */
         public function getTypeOfSiteSpanXpath($type = self::PAID_SOLUTION_TYPE) {
             return "//label[@for=\"type_of_site$type\"]/span";
         }
 
-        /** Данный метод отвечает за выбор в браузере типа шаблона.
-         * @param $type - передается тип готового решения
+        /** Выбирает в браузере тип шаблона
+         * @param int $type тип готового решения
+         * @see self::PAID_SOLUTION_TYPE
+         * @see self::FREE_SOLUTION_TYPE
+         * @see self::DEMO_SOLUTION_TYPE
+         * @see self::BLANK_SOLUTION_TYPE
          */
         private function selectTypeOfSite($type) {
             $this->acceptanceTester->click($this->getTypeOfSiteSpanXpath($type));
@@ -138,6 +146,8 @@
 
         /** Находит через поиск введенное решение и устанавливает его.
          * На данный момент используется только для 1 и 2 типов решения
+         * @see self::PAID_SOLUTION_TYPE
+         * @see self::FREE_SOLUTION_TYPE
          * @throws \Exception - если установка не удалась.
          */
         private function searchTemplateInstaller() {

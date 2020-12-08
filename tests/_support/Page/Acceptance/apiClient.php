@@ -32,10 +32,10 @@
             $doc = $this->getDemositesList();
             $xpath = new DOMXPath($doc);
             $types = $xpath->query("//solution[@name=\"$name\"]/parent::*");
-            if ($types->length==0) {
-                throw new \Exception("\nНе найден шаблон с именем $name.\n"
-                    . "Проверьте название в файле install.ini.\n"
-                    . "Если название корректное, то убедитесь, что этот шаблон привязан к вашему ключу.\n");
+            if ($types->length == 0) {
+                throw new \Exception("Не найден шаблон с именем $name."
+                    . "Проверьте название в файле install.ini."
+                    . "Если название корректное, то убедитесь, что этот шаблон привязан к вашему ключу.");
             }
             foreach ($types as $type) {
                 return $type->nodeName;
@@ -131,10 +131,8 @@
             if ($doc->documentElement->getAttribute('type') !== 'exception') {
                 return;
             }
-
             $xpath = new DOMXPath($doc);
             $errors = $xpath->query('//error');
-
                 foreach ($errors as $error) {
                     throw new Exception($error->nodeValue, $error->getAttribute('code'));
                 }
