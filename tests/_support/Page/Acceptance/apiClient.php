@@ -25,8 +25,9 @@
 
         /**
          * Получает тип шаблона по его имени
-         * @return string - название типа шаблона
-         * @throws Exception - в случае ошибок
+         * @param string $name имя шаблона
+         * @return string название типа шаблона
+         * @throws Exception в случае ошибок
          */
         public function getSolutionType($name) {
             $doc = $this->getDemositesList();
