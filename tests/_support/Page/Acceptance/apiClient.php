@@ -7,17 +7,19 @@
     use Exception;
 
     /**
-     * Данный класс содержит методы для получения типа загружаемого решения.
-     * @return $name - тип устанавливаемого шаблона.
-     * 1 - Мои покупки
-     * 2 - Бесплатные готовые решения
-     * 3 - Демошаблоны
+     * Данный класс является api клиентом для сервера обновлений
+     * @return $name - имя типа устанавливаемого шаблона.
      * Может вернуть null если не найдет шаблон.
     */
-    class getSolutionType {
+    class apiClient {
 
+        /** @var $installIni - переменная класса installIni, нужна для создания параметров GET запроса */
         private $installIni;
 
+        /**
+         * Сохраняет instalIni в переменную внутри класса.
+         * @param installIni $installIni - переменная класса installIni, нужна для создания параметров GET запроса
+         */
         public function __construct(installIni $installIni) {
 
             $this->installIni = $installIni;
@@ -25,11 +27,11 @@
 
         /**
          * Формирует адрес для запроса и возвращает его
-         * @param $type
-         * @param array $params
-         * @return string
+         * @param $type - тип запроса
+         * @param array $params - параметры для запроса
+         * @return string - возвращает URL
         */
-        private function buildUrl($type, $params = []) {
+        private function buildUrl($type, $params = []) : string {
             $installIni = $this->installIni;
             $params['type'] = $type;
             $params['revision'] = 'last';
@@ -40,7 +42,13 @@
                 http_build_query($params, '', '&');
         }
 
-        private function getRemoteFile($url) {
+        /**
+         * Загружает файл на удаленном сервере
+         * @param $url - URL адрес
+         * @return string - возвращает загруженный файл в виде строки
+         * @throws Exception - если загрузка не удалась
+         */
+        private function getRemoteFile($url) : string {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_HEADER, false);
@@ -59,7 +67,12 @@
             return $remoteFileContent;
         }
 
-        private function checkXmlErrors($xml) {
+        /**
+         * Проверяет xml файл на наличие ошибок
+         * @param String $xml - передается XML в виде строки
+         * @throws Exception - если отсутствует класс DomDocument
+         */
+        private function checkXmlErrors(String $xml) {
             if (!class_exists('DomDocument')) {
                 throw new Exception(
                     'Отсутствует класс DomDocument. Подробное описание ошибки и способы её устранения ' .
@@ -72,10 +85,13 @@
             if (is_string($xml) && strpos($xml, '<') === 0 && $doc->loadXML($xml)) {
                 $this->checkResponseErrors($doc);
             }
-
-            unset($doc);
         }
 
+        /**
+         * Получает список сайтов с сервера
+         * @throws Exception - если не удается загрузить список
+         * @return DOMDocument - список сайтов
+         */
         private function getDemositesList() {
             $url = $this->buildUrl('get-solution-list');
             $result = $this->getRemoteFile($url);
@@ -89,18 +105,29 @@
             throw new Exception('Не удается загрузить список сайтов.');
         }
 
+        /**
+         * Проверяет ответ сервера на наличие ошибок
+         * @throws Exception - выбрасывает ошибку сервера
+         */
         private function checkResponseErrors(DOMDocument $doc) {
-            if ($doc->documentElement->getAttribute('type') == 'exception') {
-                $xpath = new DOMXPath($doc);
-                $errors = $xpath->query('//error');
+            if ($doc->documentElement->getAttribute('type') !== 'exception') {
+                return;
+            }
+
+            $xpath = new DOMXPath($doc);
+            $errors = $xpath->query('//error');
 
                 foreach ($errors as $error) {
                     throw new Exception($error->nodeValue, $error->getAttribute('code'));
                 }
-            }
         }
 
-        public function getSolutionType($name) {
+        /**
+         * Получает тип шаблона по его имени
+         * @return string - название типа шаблона
+         * @throws Exception - в случае ошибок
+         */
+        public function getSolutionType($name) : string {
             $doc = $this->getDemositesList();
             $xpath = new DOMXPath($doc);
             $types = $xpath->query("//solution[@name=\"$name\"]/parent::*");

@@ -3,27 +3,63 @@
     namespace Page\Acceptance;
 
     /**
-     * Данный класс отвечает за парсинг файла install.ini
+     * Данный класс представляет собой install.ini
     */
-    class installIni {
-        public $domain, $ip, $key;
-        public $host, $dbuser, $dbpassword, $dbname;
+    class installIni
+    {
+        /** @var $domain - содержит domain из секции [LICENSE] файла install.ini */
+        public $domain;
+
+        /** @var $ip - содержит ip из секции [LICENSE] файла install.ini */
+        public $ip;
+
+        /** @var $key -  содержит key из секции [LICENSE] файла install.ini */
+        public $key;
+
+        /** @var $host -  содержит host из секции [DB] файла install.ini */
+        public $host;
+
+        /** @var $dbuser -  содержит user из секции [DB] файла install.ini */
+        public $dbuser;
+
+        /** @var $dbpassword -  содержит password из секции [DB] файла install.ini */
+        public $dbpassword;
+
+        /** @var $dbname -  содержит dbname из секции [DB] файла install.ini */
+        public $dbname;
+
+        /** @var $templateName -  содержит name из секции [DEMOSITE] файла install.ini */
         public $templateName;
-        public $login, $password, $email;
+
+        /** @var $login -  содержит login из секции [SUPERVISOR] файла install.ini */
+        public $login;
+
+        /** @var $password -  содержит password из секции [SUPERVISOR] файла install.ini */
+        public $password;
+
+        /** @var $email -  содержит email из секции [SUPERVISOR] файла install.ini */
+        public $email;
 
         /** Путь к install.ini. Временное решение (хардкод). Позже будет изменен */
         private const INSTALL_INI_PATH = 'install.ini';
 
-        public function __construct() {
+        /**
+         * При создании класса запускает parseInstallIni
+         */
+        public function __construct()
+        {
             $this->parseInstallIni();
         }
 
         /**
          * Данный метод парсит install.ini в переменные класса installIni
-        */
-        private function parseInstallIni() {
-            if (!file_exists(self::INSTALL_INI_PATH)) throw new \Exception("Не найден файл install.ini. 
-            Убедитесь, что он существует в корневой директории.");
+         */
+        private function parseInstallIni()
+        {
+            if (!file_exists(self::INSTALL_INI_PATH)) {
+                throw new \Exception("Не найден файл install.ini."
+                    . "Убедитесь, что он существует в корневой директории.");
+            }
             $iniArray = parse_ini_file(self::INSTALL_INI_PATH, true);
 
             $licenseTestArray = ['domain', 'ip', 'key'];
@@ -52,5 +88,4 @@
                 throw new \Exception('Проблема с одним из полей файла install.ini. Убедитесь, что существуют все поля.');
             }
         }
-
-}
+    }
